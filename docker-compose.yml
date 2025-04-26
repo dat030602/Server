@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  odoo1:
+    container_name: odoo1
+    depends_on:
+    - db
+    build:
+      context: .
+      dockerfile: ./Dockerfile/odoo
+    volumes:
+      - ./dev/odoo-17.0:/app/odoo
+      - ./backup:/data/backup
+      - ./dev/dev_addons:/mnt/dev_addons
+      - odoo_data:/mnt/odoo
+    ports:
+      - "8081:8069"
+
+  db:
+    container_name: db
+    build:
+      context: .
+      dockerfile: ./Dockerfile/db
+    ports:
+      - "5433:5432"
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./Dockerfile/nginx
+    volumes:
+      - ./log/nginx/access.log:/var/log/nginx/access.log
+      - ./log/nginx/error.log:/var/log/nginx/error.log
+      - ./log/nginx/queue_access.log:/var/log/nginx/queue_access.log
+      - ./log/nginx/requests.log:/var/log/nginx/requests.log
+      - ./log/nginx/spam_access.log:/var/log/nginx/spam_access.log
+      - ./conf/nginx.conf:/etc/nginx/nginx.conf
+      - ./certs/www:/etc/letsencrypt  # Volume for storing certificates
+      - ./log/nginx:/var/log/nginx  # Optional: For logs
+    ports:
+      - "80:80"
+      - "443:443"
+
+volumes:
+  odoo_data:

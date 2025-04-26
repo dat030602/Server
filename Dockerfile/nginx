@@ -1,0 +1,27 @@
+# Use the official Nginx image based on Alpine
+FROM nginx:alpine
+
+# Install Certbot
+RUN apk add --no-cache certbot openssl
+
+# Create directories for logs and SSL certificates
+RUN mkdir -p /var/log/nginx /etc/letsencrypt /mnt/odoo
+
+# Copy custom Nginx configuration
+COPY ./conf/nginx.conf /etc/nginx/nginx.conf
+
+# Expose ports
+EXPOSE 80 443
+
+# Generate a self-signed certificate
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /etc/letsencrypt/selfsigned.key \
+    -out /etc/letsencrypt/selfsigned.crt \
+    -subj "/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=localhost"
+
+# Copy the entrypoint script for Certbot
+COPY ./scripts/certbot.sh /usr/local/bin/certbot.sh
+RUN chmod +x /usr/local/bin/certbot.sh
+
+# Set the entry point to the Certbot script
+ENTRYPOINT ["/usr/local/bin/certbot.sh"]

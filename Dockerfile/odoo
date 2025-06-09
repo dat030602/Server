@@ -47,9 +47,9 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install wkhtmltopdf
-RUN wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb && \
-    dpkg -i wkhtmltox_0.12.6-1.bionic_amd64.deb || apt-get -y install -f && \
-    rm wkhtmltox_0.12.6-1.bionic_amd64.deb
+RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb && \
+    dpkg -i wkhtmltox_0.12.5-1.bionic_amd64.deb || apt-get -y install -f && \
+    rm wkhtmltox_0.12.5-1.bionic_amd64.deb
 
 # Create directories for logs and backups
 RUN mkdir -p /var/log/odoo /data/backup
